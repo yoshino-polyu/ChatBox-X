@@ -5,17 +5,17 @@ import toml
 # =============================================================================
 # Load configuration from the TOML settings file
 # =============================================================================
-try:
-    credentials = toml.load("secrets")
-except Exception as e:
-    st.error(f"Error loading settings file: {e}")
-    st.stop()
+# try:
+#     credentials = toml.load("secrets")
+# except Exception as e:
+#     st.error(f"Error loading settings file: {e}")
+#     st.stop()
 
 # Extract API/access settings
-api_key = credentials.get("api_key", "")
-model_used = credentials.get("model_used", "o3-mini")
-reasoning_effort = credentials.get("reasoning_effort", "high")
-max_completion_tokens = credentials.get("max_completion_tokens", 45000)
+api_key = st.secrets.get("api_key", "")
+model_used = st.secrets.get("model_used", "o3-mini")
+reasoning_effort = st.secrets.get("reasoning_effort", "high")
+max_completion_tokens = st.secrets.get("max_completion_tokens", 45000)
 
 st.title("ChatBox – Agent Powered by o3-mini with High Reasoning Effort")
 """
