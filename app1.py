@@ -6,7 +6,7 @@ import toml
 # Load configuration from the TOML settings file
 # =============================================================================
 try:
-    credentials = toml.load("settings")
+    credentials = toml.load("secrets")
 except Exception as e:
     st.error(f"Error loading settings file: {e}")
     st.stop()
@@ -80,7 +80,7 @@ if not st.session_state["system_set"]:
         st.session_state["system_prompt"] = system_prompt_input
         # Insert the system prompt as the very first message in the context.
         st.session_state["messages"].insert(0, {"role": "developer", "content": system_prompt_input})
-        print("messages in session state: ", st.session_state["messages"])
+        # print("messages in session state: ", st.session_state["messages"])
         # temporarily show the system prompt
         if st.session_state.get("messages"):
           last_message = st.session_state["messages"][-1]
@@ -96,7 +96,7 @@ if st.session_state["system_set"]:
     if user_input:
         # Append the user message to conversation history.
         st.session_state["messages"].append({"role": "user", "content": user_input})
-        print("messages in session state: ", st.session_state["messages"])
+        # print("messages in session state: ", st.session_state["messages"])
         
         # st.markdown in this position will clear previous conversation. so everytime at this position, show the whole conversation history. 
         for message in st.session_state.get("messages", []):
@@ -115,7 +115,7 @@ if st.session_state["system_set"]:
         
         # Append the assistant's reply to the conversation history.
         st.session_state["messages"].append({"role": "assistant", "content": assistant_response})
-        print("messages in session state: ", st.session_state["messages"])
+        # print("messages in session state: ", st.session_state["messages"])
         
         # By default ChatGPT outputs MarkDown syntax text. 
         # temporarily show the assistant's reply.
