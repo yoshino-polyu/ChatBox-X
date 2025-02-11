@@ -1,0 +1,4 @@
+api_key = "sk-IMALWmzYA7Fff1549a6AT3BlbKFJ6C5f192125Ce471bA8D1"
+model_used = "o3-mini"
+reasoning_effort = "high"
+max_completion_tokens = 45000
