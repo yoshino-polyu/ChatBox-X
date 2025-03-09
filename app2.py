@@ -1,19 +1,20 @@
 import streamlit as st
 import requests
-import json
 
 # =============================================================================
 # Load configuration from secrets
 # =============================================================================
 # api_key = st.secrets.get("api_key", "")
 # model_used = st.secrets.get("model_used", "gpt-4o-mini")
-# kb_id = st.secrets.get("kb_id", "")  # Add knowledge base ID to secrets
+# kb_list = st.secrets.get("kb_list", ["<knowledge_base_id>"])  # List of KB IDs
 api_key = 'flo_c6cca60e3421694ac6c97fbaf9d810b96cf4e369c8e5e1d993a35b7673647b1d'
 model_used = 'gpt-4o-mini'
-kb_id = 'c0fe3f96-ab59-4345-bd19-99e0eb7cf053'
+kb_list = 'c0fe3f96-ab59-4345-bd19-99e0eb7cf053'
 
-st.title("ChatBox – Knowledge-Enhanced Agent")
-"""11.2.2025 by Simon, Xu"""
+st.title("Flowith Knowledge Chat Interface")
+"""
+Updated for Flowith Knowledge Retrieval API (Non-Streaming)
+"""
 
 # =============================================================================
 # Session state initialization
@@ -25,17 +26,17 @@ if "system_set" not in st.session_state:
     st.session_state["system_set"] = False
 
 # =============================================================================
-# Updated API call function with knowledge retrieval
+# Updated API call function for Flowith
 # =============================================================================
 def fetch_knowledge_response(api_key, messages, model, kb_list):
     """
-    Calls the Knowledge Retrieval API and processes streaming response
-    Returns tuple: (final_content, seeds, error)
+    Calls Flowith Knowledge Retrieval API (Non-Streaming)
     """
     url = "https://edge.flowith.net/external/use/seek-knowledge"
     headers = {
         "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Host": "edge.flowith.net"
     }
     payload = {
         "messages": messages,
@@ -45,79 +46,58 @@ def fetch_knowledge_response(api_key, messages, model, kb_list):
     }
     
     try:
-        response = requests.post(url, headers=headers, json=payload, stream=False)
+        response = requests.post(url, headers=headers, json=payload)
         response.raise_for_status()
+        res = response.json()
         
-        seeds = []
-        final_content = ""
-        
-        for line in response.iter_lines():
-            if line:
-                decoded_line = line.decode('utf-8')
-                if decoded_line.startswith('data:'):
-                    json_str = decoded_line[5:].strip()
-                    try:
-                        data = json.loads(json_str)
-                        if data.get('tag') == 'seeds':
-                            seeds.extend(data['content'])
-                        elif data.get('tag') == 'final':
-                            final_content = data['content']
-                    except json.JSONDecodeError:
-                        continue
-        
-        return (final_content, seeds, None)
-        
+        if res.get("tag") == "final":
+            return res.get("content", "No content found in response")
+        else:
+            return "Unexpected response format from API"
+            
     except requests.RequestException as e:
-        return (None, [], f"API Request Error: {str(e)}")
+        return f"API Request failed: {str(e)}"
     except Exception as e:
-        return (None, [], f"Processing Error: {str(e)}")
+        return f"Error processing response: {str(e)}"
 
 # =============================================================================
-# System Prompt Setup (Remains unchanged)
+# System Prompt Setup
 # =============================================================================
-if not st.session_state["system_set"]:
-    system_prompt_input = st.text_area("System Prompt", "")
-    if st.button("Set System Prompt"):
-        st.session_state["system_set"] = True
-        st.session_state["system_prompt"] = system_prompt_input
-        st.session_state["messages"].insert(0, 
-            {"role": "developer", "content": system_prompt_input})
+# if not st.session_state["system_set"]:
+#     system_prompt_input = st.text_area("System Prompt", "You are a helpful assistant that uses knowledge base content")
+#     if st.button("Initialize System"):
+#         st.session_state["system_set"] = True
+#         st.session_state["messages"].insert(0, {
+#             "role": "system",
+#             "content": system_prompt_input
+#         })
 
 # =============================================================================
-# Chat Interface with Knowledge Integration
+# Chat Interface
 # =============================================================================
 if st.session_state["system_set"]:
-    user_input = st.chat_input("Your message")
+    user_input = st.chat_input("Type your message")
+    
     if user_input:
-        # Update conversation history
+        # Add user message to history
         st.session_state["messages"].append({"role": "user", "content": user_input})
         
         # Display conversation history
-        for message in st.session_state["messages"]:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
+        for msg in st.session_state["messages"]:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
         
-        # Get knowledge-enhanced response
-        final_content, seeds, error = fetch_knowledge_response(
-            api_key,
-            st.session_state["messages"],
-            model_used,
-            [kb_id]  # Use knowledge base from secrets
+        # Get API response
+        response = fetch_knowledge_response(
+            api_key=api_key,
+            messages=st.session_state["messages"],
+            model=model_used,
+            kb_list=[kb_list]
         )
         
-        if error:
-            st.error(error)
-        else:
-            # Integrate seeds into response
-            knowledge_snippets = "\n".join(
-                [f"📚 Source {i+1}: {seed['content']}" 
-                 for i, seed in enumerate(seeds)])
-            
-            full_response = f"{final_content}\n\n{knowledge_snippets}"
-            
-            # Update session state and display
-            st.session_state["messages"].append(
-                {"role": "assistant", "content": full_response})
-            
-            with st.chat_message("assistant"):
-                st.markdown(full_response)
+        # Add assistant response to history
+        st.session_state["messages"].append({"role": "assistant", "content": response})
+        
+        # Display new response
+        with st.chat_message("assistant"):
+            st.markdown(response)
