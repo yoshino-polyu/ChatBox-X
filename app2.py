@@ -75,29 +75,29 @@ def fetch_knowledge_response(api_key, messages, model, kb_list):
 # =============================================================================
 # Chat Interface
 # =============================================================================
-if st.session_state["system_set"]:
-    user_input = st.chat_input("Type your message")
+# if st.session_state["system_set"]:
+user_input = st.chat_input("Type your message")
+
+if user_input:
+    # Add user message to history
+    st.session_state["messages"].append({"role": "user", "content": user_input})
     
-    if user_input:
-        # Add user message to history
-        st.session_state["messages"].append({"role": "user", "content": user_input})
-        
-        # Display conversation history
-        for msg in st.session_state["messages"]:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
-        
-        # Get API response
-        response = fetch_knowledge_response(
-            api_key=api_key,
-            messages=st.session_state["messages"],
-            model=model_used,
-            kb_list=[kb_list]
-        )
-        
-        # Add assistant response to history
-        st.session_state["messages"].append({"role": "assistant", "content": response})
-        
-        # Display new response
-        with st.chat_message("assistant"):
-            st.markdown(response)
+    # Display conversation history
+    for msg in st.session_state["messages"]:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+    
+    # Get API response
+    response = fetch_knowledge_response(
+        api_key=api_key,
+        messages=st.session_state["messages"],
+        model=model_used,
+        kb_list=[kb_list]
+    )
+    
+    # Add assistant response to history
+    st.session_state["messages"].append({"role": "assistant", "content": response})
+    
+    # Display new response
+    with st.chat_message("assistant"):
+        st.markdown(response)
