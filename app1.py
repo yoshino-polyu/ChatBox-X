@@ -45,6 +45,8 @@ def fetch_chat_response(api_key, messages, model, reasoning_effort, max_completi
     url = "https://aigptx.top/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "Host": "aigptx.top"
     }
     payload = {
         "messages": messages,
@@ -71,10 +73,7 @@ def fetch_chat_response(api_key, messages, model, reasoning_effort, max_completi
 # =============================================================================
 if not st.session_state["system_set"]:
     # Ask the user for the system prompt. (This part runs only until the prompt is set.)
-    system_prompt_input = st.text_area(
-        "Ststem Prompt",
-        ""
-    )
+    system_prompt_input = st.text_area("Ststem Prompt","")
     if st.button("Set System Prompt"):
         st.session_state["system_set"] = True
         st.session_state["system_prompt"] = system_prompt_input
