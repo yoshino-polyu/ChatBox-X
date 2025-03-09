@@ -45,8 +45,7 @@ def fetch_chat_response(api_key, messages, model, reasoning_effort, max_completi
     url = "https://aigptx.top/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-        "Host": "aigptx.top"
+        "Content-Type": "application/json"
     }
     payload = {
         "messages": messages,

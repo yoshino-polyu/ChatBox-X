@@ -35,8 +35,7 @@ def fetch_knowledge_response(api_key, messages, model, kb_list):
     url = "https://edge.flowith.net/external/use/seek-knowledge"
     headers = {
         "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-        "Host": "edge.flowith.net"
+        "Content-Type": "application/json"
     }
     payload = {
         "messages": messages,
