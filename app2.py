@@ -9,7 +9,7 @@ import requests
 # kb_list = st.secrets.get("kb_list", ["<knowledge_base_id>"])  # List of KB IDs
 api_key = 'flo_f3bd300507d869203da4f3e8e977aac21d1864df8bd67d22573719c7407d9a30'
 model_used = 'gpt-4o-mini'
-kb_list = 'c0fe3f96-ab59-4345-bd19-99e0eb7cf053'
+kb_list = 'ba39717f-e8ed-42d0-b85d-2175cca917b5'
 
 st.title("Flowith Knowledge Chat Interface")
 """
