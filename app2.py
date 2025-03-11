@@ -7,7 +7,7 @@ import requests
 # api_key = st.secrets.get("api_key", "")
 # model_used = st.secrets.get("model_used", "gpt-4o-mini")
 # kb_list = st.secrets.get("kb_list", ["<knowledge_base_id>"])  # List of KB IDs
-api_key = 'flo_c6cca60e3421694ac6c97fbaf9d810b96cf4e369c8e5e1d993a35b7673647b1d'
+api_key = 'flo_f3bd300507d869203da4f3e8e977aac21d1864df8bd67d22573719c7407d9a30'
 model_used = 'gpt-4o-mini'
 kb_list = 'c0fe3f96-ab59-4345-bd19-99e0eb7cf053'
 
